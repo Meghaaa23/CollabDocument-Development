@@ -1,0 +1,16 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+SQLAlchemy==2.0.36
+pydantic[email]==2.10.3
+PyJWT==2.10.1
+passlib==1.7.4
+python-multipart==0.0.20
+bleach==6.2.0
+markdown==3.7
+mammoth==1.8.0
+# Optional: lets you point DATABASE_URL at Postgres (e.g. a free Neon DB) for
+# durable production storage, with zero code changes. Not needed for local dev.
+psycopg[binary]==3.2.3
+# dev / test
+pytest==8.3.4
+httpx==0.28.1

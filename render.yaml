@@ -1,0 +1,23 @@
+# Render.com blueprint. In the Render dashboard: New + > Blueprint, point it at
+# this repo, and it provisions the service below. Free plan compatible.
+#
+# NOTE ON PERSISTENCE: Render's free web service has an ephemeral filesystem, so
+# the SQLite file resets when the instance restarts (the demo data re-seeds
+# automatically on every boot, so the app is always demo-ready). For durable
+# storage, create a free Postgres database (Render or Neon) and set DATABASE_URL
+# to its connection string using the postgresql+psycopg:// scheme -- no code
+# changes required.
+services:
+  - type: web
+    name: collabdocs
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_PASSWORD
+        value: demo1234
+      # - key: DATABASE_URL
+      #   value: postgresql+psycopg://USER:PASSWORD@HOST/DBNAME   # optional, for durable storage

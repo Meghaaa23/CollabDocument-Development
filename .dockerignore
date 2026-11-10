@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/__pycache__
+**/*.pyc
+.venv
+backend/static
+backend/collabdocs.db
+.git
+docs/screenshots
+*.md
