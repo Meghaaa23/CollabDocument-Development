@@ -22,7 +22,8 @@
 
 ## Live deployment
 
-- **Live URL:** _<paste your deployed URL here after deploying — see README “Deploy”>_
+- **Live URL:** **https://collabdocs-untf.onrender.com**
+  - _Hosted on Render's free tier; the first request after idle can take ~30–50s to wake (cold start), then it's fast._
 - **Demo accounts** (password `demo1234`):
   - `alice@example.com` — owns the sample documents
   - `bob@example.com` — has a document shared with him

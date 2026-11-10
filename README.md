@@ -4,6 +4,10 @@ A lightweight collaborative document editor (Google Docs–inspired), built as a
 timeboxed full-stack take-home. Users can create, edit, rename, upload, and
 **share** rich-text documents, with ownership and access enforced server-side.
 
+🔗 **Live demo:** https://collabdocs-untf.onrender.com — sign in as
+`alice@example.com` / `demo1234`. _(Free tier: first load after idle can take
+~30–50s to wake.)_
+
 **Stack:** FastAPI (Python) · React + Vite · TipTap editor · SQLAlchemy + SQLite
 (Postgres-ready) · JWT auth · Docker single-image deploy.
 
@@ -22,7 +26,7 @@ timeboxed full-stack take-home. Users can create, edit, rename, upload, and
 | Automated test | ✅ | 8 pytest cases focused on access control + untrusted content |
 | Architecture note | ✅ | [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
 | AI workflow note | ✅ | [`AI_WORKFLOW.md`](./AI_WORKFLOW.md) |
-| Live deployment | ⚙️ | One-command Docker image; deploy steps below |
+| Live deployment | ✅ | Live at https://collabdocs-untf.onrender.com (single Docker image on Render) |
 
 ---
 
