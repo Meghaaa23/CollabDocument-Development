@@ -22,14 +22,14 @@ function DocCard({ doc, onOpen, onDelete }) {
       </div>
       {doc.is_owner && (
         <button
-          className="icon-btn danger"
+          className="link-btn danger"
           title="Delete document"
           onClick={(e) => {
             e.stopPropagation();
             onDelete(doc);
           }}
         >
-          🗑
+          Delete
         </button>
       )}
     </div>
@@ -73,7 +73,7 @@ export default function Dashboard({ currentUser, onOpenDoc, onLogout }) {
 
   async function handleUpload(e) {
     const file = e.target.files?.[0];
-    e.target.value = ""; // allow re-uploading the same file
+    e.target.value = "";
     if (!file) return;
     setBusy(true);
     setError("");
@@ -117,14 +117,14 @@ export default function Dashboard({ currentUser, onOpenDoc, onLogout }) {
       <main className="container">
         <div className="actions-row">
           <button className="btn primary" onClick={createNew} disabled={busy}>
-            + New document
+            New document
           </button>
           <button
             className="btn"
             onClick={() => fileInput.current?.click()}
             disabled={busy}
           >
-            ⬆ Upload file
+            Upload file
           </button>
           <input
             ref={fileInput}
@@ -134,7 +134,7 @@ export default function Dashboard({ currentUser, onOpenDoc, onLogout }) {
             onChange={handleUpload}
           />
           <span className="muted small upload-hint">
-            Supported: .txt, .md, .docx → becomes an editable doc
+            Supported: .txt, .md, .docx becomes an editable doc
           </span>
         </div>
 

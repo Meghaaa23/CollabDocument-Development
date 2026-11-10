@@ -1,11 +1,9 @@
-// Formatting toolbar wired to the TipTap editor instance.
-
 function Btn({ onClick, active, disabled, title, children }) {
   return (
     <button
       type="button"
       className={`tb-btn${active ? " active" : ""}`}
-      onMouseDown={(e) => e.preventDefault()} // keep editor selection
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       disabled={disabled}
       title={title}
@@ -17,7 +15,6 @@ function Btn({ onClick, active, disabled, title, children }) {
 
 export default function Toolbar({ editor, disabled }) {
   if (!editor) return null;
-  const can = (fn) => !disabled && fn;
 
   return (
     <div className="toolbar" role="toolbar" aria-label="Formatting">
@@ -70,7 +67,7 @@ export default function Toolbar({ editor, disabled }) {
         active={editor.isActive("paragraph")}
         onClick={() => editor.chain().focus().setParagraph().run()}
       >
-        ¶
+        Text
       </Btn>
 
       <span className="tb-divider" />
@@ -81,7 +78,7 @@ export default function Toolbar({ editor, disabled }) {
         active={editor.isActive("bulletList")}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
       >
-        • List
+        Bullets
       </Btn>
       <Btn
         title="Numbered list"
@@ -89,7 +86,7 @@ export default function Toolbar({ editor, disabled }) {
         active={editor.isActive("orderedList")}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
       >
-        1. List
+        Numbered
       </Btn>
 
       <span className="tb-divider" />
@@ -99,14 +96,14 @@ export default function Toolbar({ editor, disabled }) {
         disabled={disabled || !editor.can().undo()}
         onClick={() => editor.chain().focus().undo().run()}
       >
-        ↶
+        Undo
       </Btn>
       <Btn
         title="Redo (Ctrl+Y)"
         disabled={disabled || !editor.can().redo()}
         onClick={() => editor.chain().focus().redo().run()}
       >
-        ↷
+        Redo
       </Btn>
     </div>
   );

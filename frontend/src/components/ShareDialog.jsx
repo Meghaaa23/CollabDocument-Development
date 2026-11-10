@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { api } from "../api.js";
 
-// Modal for managing who a document is shared with. Owner-only (the caller
-// only renders it when role === "owner").
 export default function ShareDialog({ doc, onClose, onChanged }) {
   const [shares, setShares] = useState(doc.shares || []);
   const [email, setEmail] = useState("");
@@ -16,7 +14,6 @@ export default function ShareDialog({ doc, onClose, onChanged }) {
     setBusy(true);
     try {
       const share = await api.addShare(doc.id, email.trim(), permission);
-      // Replace if the user already had a grant, else append.
       setShares((prev) => {
         const rest = prev.filter((s) => s.user.id !== share.user.id);
         return [...rest, share];
@@ -48,8 +45,8 @@ export default function ShareDialog({ doc, onClose, onChanged }) {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <h3>Share “{doc.title}”</h3>
-          <button className="icon-btn" onClick={onClose} title="Close">
-            ✕
+          <button className="btn ghost" onClick={onClose} title="Close">
+            Close
           </button>
         </div>
 

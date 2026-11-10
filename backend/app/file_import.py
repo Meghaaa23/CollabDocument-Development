@@ -1,13 +1,3 @@
-"""Turn an uploaded file into editable rich-text HTML.
-
-Supported types (stated clearly in the UI + README):
-    .txt  -> paragraphs, newline-preserving
-    .md   -> rendered Markdown (headings, bold, lists, etc.)
-    .docx -> converted with mammoth, preserving headings/bold/italic/lists
-
-Everything returned here is still passed through the sanitizer by the caller,
-so even a malicious .docx cannot inject active content.
-"""
 import io
 from html import escape
 
@@ -34,7 +24,6 @@ def _txt_to_html(raw: bytes) -> str:
         para = para.strip("\n")
         if not para.strip():
             continue
-        # Preserve single newlines inside a paragraph as <br>.
         html_parts.append("<p>" + escape(para).replace("\n", "<br>") + "</p>")
     return "".join(html_parts) or "<p></p>"
 
@@ -50,10 +39,6 @@ def _docx_to_html(raw: bytes) -> str:
 
 
 def import_file(filename: str, raw: bytes) -> tuple[str, str]:
-    """Return (suggested_title, html_body) for a supported upload.
-
-    Raises UnsupportedFileType for anything outside SUPPORTED_EXTENSIONS.
-    """
     ext = _ext(filename)
     if ext not in SUPPORTED_EXTENSIONS:
         raise UnsupportedFileType(
@@ -65,10 +50,9 @@ def import_file(filename: str, raw: bytes) -> tuple[str, str]:
         body = _txt_to_html(raw)
     elif ext in (".md", ".markdown"):
         body = _md_to_html(raw)
-    else:  # .docx
+    else:
         body = _docx_to_html(raw)
 
-    # Suggested title = filename without extension.
     base = filename[: filename.rfind(".")] if "." in filename else filename
     title = base.strip() or "Imported document"
     return title[:255], body

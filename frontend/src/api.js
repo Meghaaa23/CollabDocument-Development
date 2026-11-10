@@ -1,7 +1,3 @@
-// Thin API client. All calls go to same-origin "/api/..." (Vite proxies to the
-// backend in dev; FastAPI serves both in prod). The JWT is kept in localStorage
-// and attached as a Bearer token.
-
 const TOKEN_KEY = "collabdocs_token";
 
 export function getToken() {
@@ -27,7 +23,7 @@ async function request(path, { method = "GET", body, isForm = false } = {}) {
 
   let payload;
   if (isForm) {
-    payload = body; // FormData; browser sets the content-type/boundary
+    payload = body;
   } else if (body !== undefined) {
     headers["Content-Type"] = "application/json";
     payload = JSON.stringify(body);

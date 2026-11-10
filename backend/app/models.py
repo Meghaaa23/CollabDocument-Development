@@ -1,12 +1,3 @@
-"""SQLAlchemy ORM models.
-
-Three tables keep the data model small but expressive enough to demonstrate
-ownership and sharing:
-
-    User      - a person who can own and be granted documents
-    Document  - rich-text content owned by exactly one user
-    Share     - a grant of access on a document to another user
-"""
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, ForeignKey, String, Text, UniqueConstraint
@@ -38,7 +29,6 @@ class Document(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False, default="Untitled document")
-    # Sanitized HTML produced by the TipTap editor.
     content: Mapped[str] = mapped_column(Text, nullable=False, default="")
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
@@ -61,7 +51,6 @@ class Share(Base):
         ForeignKey("documents.id", ondelete="CASCADE"), nullable=False, index=True
     )
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
-    # "view" or "edit". Kept simple; defaults to edit for a collaborative feel.
     permission: Mapped[str] = mapped_column(String(10), nullable=False, default="edit")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 

@@ -12,7 +12,7 @@ const AUTOSAVE_MS = 900;
 export default function Editor({ docId, currentUser, onBack }) {
   const [doc, setDoc] = useState(null);
   const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("idle"); // idle|saving|saved|error
+  const [status, setStatus] = useState("idle");
   const [loadError, setLoadError] = useState("");
   const [showShare, setShowShare] = useState(false);
 
@@ -24,7 +24,7 @@ export default function Editor({ docId, currentUser, onBack }) {
 
   const editor = useEditor(
     {
-      editable: false, // flipped on once the doc + role are known
+      editable: false,
       extensions: [
         StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
         Underline,
@@ -62,7 +62,6 @@ export default function Editor({ docId, currentUser, onBack }) {
     [doSave]
   );
 
-  // Load the document.
   useEffect(() => {
     let cancelled = false;
     loadedOnce.current = false;
@@ -77,7 +76,6 @@ export default function Editor({ docId, currentUser, onBack }) {
           editor.commands.setContent(d.content || "<p></p>", false);
           editor.setEditable(d.role === "owner" || d.role === "edit");
         }
-        // Defer enabling autosave until after setContent's update settles.
         setTimeout(() => {
           loadedOnce.current = true;
         }, 0);
@@ -90,7 +88,6 @@ export default function Editor({ docId, currentUser, onBack }) {
       cancelled = true;
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docId, editor]);
 
   function onTitleBlur() {
@@ -115,7 +112,7 @@ export default function Editor({ docId, currentUser, onBack }) {
       <div className="page">
         <header className="topbar">
           <button className="btn ghost" onClick={onBack}>
-            ← Back
+            Back
           </button>
         </header>
         <div className="container">
@@ -129,7 +126,7 @@ export default function Editor({ docId, currentUser, onBack }) {
     <div className="page">
       <header className="topbar editor-topbar">
         <button className="btn ghost" onClick={onBack} title="Back to documents">
-          ← Back
+          Back
         </button>
 
         <input

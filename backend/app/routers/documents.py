@@ -1,9 +1,7 @@
-"""Document CRUD, file import, and sharing endpoints."""
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from ..access import get_document_or_404, require_role, role_for
+from ..access import get_document_or_404, require_role
 from ..config import settings
 from ..database import get_db
 from ..file_import import UnsupportedFileType, import_file
@@ -22,7 +20,6 @@ from ..security import get_current_user
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
 
-# ---------- serialization helpers ----------
 def _summary(doc: Document, role: str) -> dict:
     return {
         "id": doc.id,
@@ -37,17 +34,14 @@ def _summary(doc: Document, role: str) -> dict:
 def _detail(db: Session, doc: Document, role: str) -> dict:
     data = _summary(doc, role)
     data["content"] = doc.content
-    # Only the owner needs to see/manage the full collaborator list.
     data["shares"] = [ShareOut.model_validate(s) for s in doc.shares] if role == "owner" else []
     return data
 
 
-# ---------- list ----------
 @router.get("", response_model=list[DocumentSummary])
 def list_documents(
     db: Session = Depends(get_db), current: User = Depends(get_current_user)
 ):
-    """Every document the caller owns or has been granted, newest first."""
     owned = db.query(Document).filter(Document.owner_id == current.id).all()
     shared_rows = (
         db.query(Document, Share.permission)
@@ -62,7 +56,6 @@ def list_documents(
     return items
 
 
-# ---------- create ----------
 @router.post("", response_model=DocumentDetail, status_code=status.HTTP_201_CREATED)
 def create_document(
     body: DocumentCreate,
@@ -80,14 +73,12 @@ def create_document(
     return _detail(db, doc, "owner")
 
 
-# ---------- upload / import ----------
 @router.post("/upload", response_model=DocumentDetail, status_code=status.HTTP_201_CREATED)
 async def upload_document(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current: User = Depends(get_current_user),
 ):
-    """Import a .txt/.md/.docx file into a brand-new editable document."""
     raw = await file.read()
     if len(raw) == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File is empty")
@@ -100,7 +91,7 @@ async def upload_document(
         title, html = import_file(file.filename or "upload", raw)
     except UnsupportedFileType as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
-    except Exception:  # noqa: BLE001 - surface a clean error for any parser failure
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Could not read that file. It may be corrupt or malformed.",
@@ -113,7 +104,6 @@ async def upload_document(
     return _detail(db, doc, "owner")
 
 
-# ---------- read one ----------
 @router.get("/{doc_id}", response_model=DocumentDetail)
 def get_document(
     doc_id: int,
@@ -125,7 +115,6 @@ def get_document(
     return _detail(db, doc, role)
 
 
-# ---------- update (rename / edit) ----------
 @router.patch("/{doc_id}", response_model=DocumentDetail)
 def update_document(
     doc_id: int,
@@ -134,7 +123,7 @@ def update_document(
     current: User = Depends(get_current_user),
 ):
     doc = get_document_or_404(db, doc_id)
-    role = require_role(db, current, doc, need="edit")  # owner or edit
+    role = require_role(db, current, doc, need="edit")
     if body.title is not None:
         doc.title = body.title.strip() or "Untitled document"
     if body.content is not None:
@@ -144,7 +133,6 @@ def update_document(
     return _detail(db, doc, role)
 
 
-# ---------- delete ----------
 @router.delete("/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_document(
     doc_id: int,
@@ -152,12 +140,11 @@ def delete_document(
     current: User = Depends(get_current_user),
 ):
     doc = get_document_or_404(db, doc_id)
-    require_role(db, current, doc, need="owner")  # only owner can delete
+    require_role(db, current, doc, need="owner")
     db.delete(doc)
     db.commit()
 
 
-# ---------- sharing ----------
 @router.get("/{doc_id}/shares", response_model=list[ShareOut])
 def list_shares(
     doc_id: int,
@@ -196,7 +183,7 @@ def add_share(
         .one_or_none()
     )
     if existing:
-        existing.permission = body.permission  # update the grant
+        existing.permission = body.permission
         share = existing
     else:
         share = Share(document_id=doc.id, user_id=target.id, permission=body.permission)

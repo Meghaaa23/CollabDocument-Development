@@ -40,20 +40,20 @@
 
 ## What is working (end to end)
 
-- ✅ Create, rename, edit, save (autosave), and reopen documents
-- ✅ Rich text: bold, italic, underline, H1–H3, bullet & numbered lists, undo/redo
-- ✅ Upload `.txt` / `.md` / `.docx` → new editable document
-- ✅ Share with another user (view/edit); owned vs. shared clearly distinguished
-- ✅ Persistence across refresh; formatting preserved
-- ✅ Input validation, error handling, HTML sanitization (XSS defense)
-- ✅ 8 automated tests passing (`pytest -q`)
+- Create, rename, edit, save (autosave), and reopen documents
+- Rich text: bold, italic, underline, H1–H3, bullet & numbered lists, undo/redo
+- Upload `.txt` / `.md` / `.docx` → new editable document
+- Share with another user (view/edit); owned vs. shared clearly distinguished
+- Persistence across refresh; formatting preserved
+- Input validation, error handling, HTML sanitization (XSS defense)
+- 8 automated tests passing (`pytest -q`)
 
 ## What is incomplete / intentionally out of scope
 
-- ❌ **Real-time multi-user sync / live cursors** — optional stretch; highest
+- **Real-time multi-user sync / live cursors** — optional stretch; highest
   effort/risk. Collaboration is via share + autosave + reopen.
-- ❌ Sign-up / password reset — seeded accounts used (allowed by the brief).
-- ❌ Version history, PDF export, granular roles — optional stretch.
+- Sign-up / password reset — seeded accounts used (allowed by the brief).
+- Version history, PDF export, granular roles — optional stretch.
 
 ## What I'd build next (another 2–4 hours)
 

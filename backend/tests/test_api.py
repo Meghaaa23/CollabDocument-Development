@@ -1,13 +1,6 @@
-"""API tests focused on the two highest-risk areas: sharing access control and
-untrusted content handling (upload conversion + HTML sanitization).
-
-These are the behaviours most likely to break silently and most important to get
-right, so they are where the automated coverage is spent.
-"""
 import io
 
 
-# ---------------- auth ----------------
 def test_login_rejects_bad_password(client):
     r = client.post("/api/auth/login", json={"email": "alice@example.com", "password": "wrong"})
     assert r.status_code == 401
@@ -17,7 +10,6 @@ def test_me_requires_token(client):
     assert client.get("/api/documents").status_code == 401
 
 
-# ---------------- CRUD ----------------
 def test_create_rename_and_reopen(client, alice):
     created = client.post(
         "/api/documents", json={"title": "My doc", "content": "<p>hello</p>"}, headers=alice
@@ -25,10 +17,8 @@ def test_create_rename_and_reopen(client, alice):
     assert created.status_code == 201
     doc_id = created.json()["id"]
 
-    # Rename via PATCH.
     client.patch(f"/api/documents/{doc_id}", json={"title": "Renamed"}, headers=alice)
 
-    # Reopen: content + new title persisted.
     reopened = client.get(f"/api/documents/{doc_id}", headers=alice).json()
     assert reopened["title"] == "Renamed"
     assert reopened["content"] == "<p>hello</p>"
@@ -36,16 +26,13 @@ def test_create_rename_and_reopen(client, alice):
     assert reopened["role"] == "owner"
 
 
-# ---------------- sharing access control (core logic) ----------------
 def test_sharing_grants_and_scopes_access(client, alice, bob):
     doc_id = client.post(
         "/api/documents", json={"title": "Secret", "content": "<p>x</p>"}, headers=alice
     ).json()["id"]
 
-    # Before sharing: Bob cannot even see the document exists (404, not 403).
     assert client.get(f"/api/documents/{doc_id}", headers=bob).status_code == 404
 
-    # Alice shares with Bob as a viewer.
     share = client.post(
         f"/api/documents/{doc_id}/shares",
         json={"email": "bob@example.com", "permission": "view"},
@@ -53,20 +40,16 @@ def test_sharing_grants_and_scopes_access(client, alice, bob):
     )
     assert share.status_code == 201
 
-    # Now Bob can read it and it is marked as shared (not owned).
     seen = client.get(f"/api/documents/{doc_id}", headers=bob).json()
     assert seen["is_owner"] is False
     assert seen["role"] == "view"
 
-    # A viewer may NOT edit.
     assert client.patch(
         f"/api/documents/{doc_id}", json={"content": "<p>hacked</p>"}, headers=bob
     ).status_code == 403
 
-    # A viewer may NOT delete or re-share (owner-only actions).
     assert client.delete(f"/api/documents/{doc_id}", headers=bob).status_code in (403, 404)
 
-    # It appears in Bob's list exactly once, flagged as shared.
     bob_list = client.get("/api/documents", headers=bob).json()
     match = [d for d in bob_list if d["id"] == doc_id]
     assert len(match) == 1 and match[0]["is_owner"] is False
@@ -81,15 +64,12 @@ def test_editor_share_can_edit_but_not_delete(client, alice, bob):
         json={"email": "bob@example.com", "permission": "edit"},
         headers=alice,
     )
-    # Editor can edit content.
     assert client.patch(
         f"/api/documents/{doc_id}", json={"content": "<p>v2</p>"}, headers=bob
     ).status_code == 200
-    # But still cannot delete (owner-only).
     assert client.delete(f"/api/documents/{doc_id}", headers=bob).status_code == 403
 
 
-# ---------------- file upload / import ----------------
 def test_upload_markdown_becomes_rich_text(client, alice):
     md = b"# Title\n\nSome **bold** and a list:\n\n- one\n- two\n"
     r = client.post(
@@ -112,7 +92,6 @@ def test_upload_rejects_unsupported_type(client, alice):
     assert r.status_code == 400
 
 
-# ---------------- security: sanitization ----------------
 def test_script_is_stripped_on_save(client, alice):
     r = client.post(
         "/api/documents",

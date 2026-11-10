@@ -1,9 +1,3 @@
-"""Authentication endpoints: login + current user.
-
-Registration is intentionally omitted -- the brief allows seeded accounts, and
-seeded demo users keep the sharing flow easy for reviewers to exercise. Adding
-sign-up later is a small, isolated change.
-"""
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -19,7 +13,6 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 def login(body: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == body.email.lower()).one_or_none()
     if user is None or not verify_password(body.password, user.password_hash):
-        # Same error for both cases: don't reveal which emails exist.
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
         )

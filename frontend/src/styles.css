@@ -47,7 +47,6 @@ code {
   padding: 24px;
 }
 
-/* ---------- buttons ---------- */
 .btn {
   border: 1px solid var(--border);
   background: var(--surface);
@@ -103,7 +102,6 @@ code {
   color: var(--danger);
 }
 
-/* ---------- login ---------- */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -158,7 +156,6 @@ code {
   background: #eef1f5;
 }
 
-/* ---------- layout ---------- */
 .page {
   min-height: 100%;
   display: flex;
@@ -204,7 +201,6 @@ code {
   font-weight: 600;
 }
 
-/* ---------- doc cards ---------- */
 .doc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -257,7 +253,6 @@ code {
   color: #b06000;
 }
 
-/* ---------- editor ---------- */
 .editor-topbar {
   position: sticky;
   top: 0;
@@ -348,7 +343,6 @@ code {
   box-shadow: var(--shadow);
 }
 
-/* TipTap content */
 .ProseMirror {
   outline: none;
   line-height: 1.6;
@@ -382,7 +376,6 @@ code {
   padding-left: 14px;
   color: var(--muted);
 }
-/* Placeholder */
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
@@ -391,7 +384,6 @@ code {
   height: 0;
 }
 
-/* ---------- modal / share ---------- */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -459,7 +451,6 @@ code {
   background: #e6f4ea;
 }
 
-/* ---------- misc ---------- */
 .error {
   background: #fce8e6;
   color: var(--danger);

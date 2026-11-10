@@ -1,4 +1,3 @@
-"""Pytest fixtures: an isolated in-memory DB and an authenticated test client."""
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -12,7 +11,6 @@ from app.seed import seed
 
 @pytest.fixture()
 def client():
-    # Fresh in-memory SQLite per test; StaticPool keeps one shared connection.
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
@@ -23,7 +21,7 @@ def client():
 
     db = TestingSessionLocal()
     try:
-        seed(db)  # demo users + sample docs
+        seed(db)
     finally:
         db.close()
 
@@ -35,9 +33,6 @@ def client():
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
-    # Instantiate WITHOUT the context manager so the app's startup hook (which
-    # would touch the real on-disk DB) does not run -- the fixture already built
-    # and seeded an isolated in-memory DB above.
     c = TestClient(app)
     yield c
     app.dependency_overrides.clear()

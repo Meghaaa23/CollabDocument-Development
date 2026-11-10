@@ -4,7 +4,7 @@ A lightweight collaborative document editor (Google Docs–inspired), built as a
 timeboxed full-stack take-home. Users can create, edit, rename, upload, and
 **share** rich-text documents, with ownership and access enforced server-side.
 
-🔗 **Live demo:** https://collabdocs-untf.onrender.com — sign in as
+**Live demo:** https://collabdocs-untf.onrender.com — sign in as
 `alice@example.com` / `demo1234`. _(Free tier: first load after idle can take
 ~30–50s to wake.)_
 
@@ -17,16 +17,16 @@ timeboxed full-stack take-home. Users can create, edit, rename, upload, and
 
 | Requirement | Status | Notes |
 |---|---|---|
-| Create / rename / edit / save / reopen | ✅ | Autosave (debounced) + explicit "All changes saved" status |
-| Rich text: bold, italic, underline, headings, lists | ✅ | TipTap toolbar; content stored as sanitized HTML |
-| File upload → editable doc | ✅ | `.txt`, `.md`, `.docx` converted to rich text (`mammoth` / Markdown) |
-| Sharing (owner + grant + owned/shared distinction) | ✅ | `view` / `edit` roles; "My documents" vs "Shared with me" |
-| Persistence across refresh | ✅ | SQLite (swap to Postgres via one env var) |
-| Validation & error handling | ✅ | Pydantic validation, typed HTTP errors, HTML sanitization (XSS defense) |
-| Automated test | ✅ | 8 pytest cases focused on access control + untrusted content |
-| Architecture note | ✅ | [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
-| AI workflow note | ✅ | [`AI_WORKFLOW.md`](./AI_WORKFLOW.md) |
-| Live deployment | ✅ | Live at https://collabdocs-untf.onrender.com (single Docker image on Render) |
+| Create / rename / edit / save / reopen | Done | Autosave (debounced) + explicit "All changes saved" status |
+| Rich text: bold, italic, underline, headings, lists | Done | TipTap toolbar; content stored as sanitized HTML |
+| File upload → editable doc | Done | `.txt`, `.md`, `.docx` converted to rich text (`mammoth` / Markdown) |
+| Sharing (owner + grant + owned/shared distinction) | Done | `view` / `edit` roles; "My documents" vs "Shared with me" |
+| Persistence across refresh | Done | SQLite (swap to Postgres via one env var) |
+| Validation & error handling | Done | Pydantic validation, typed HTTP errors, HTML sanitization (XSS defense) |
+| Automated test | Done | 8 pytest cases focused on access control + untrusted content |
+| Architecture note | Done | [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
+| AI workflow note | Done | [`AI_WORKFLOW.md`](./AI_WORKFLOW.md) |
+| Live deployment | Done | Live at https://collabdocs-untf.onrender.com (single Docker image on Render) |
 
 ---
 

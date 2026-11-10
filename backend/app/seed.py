@@ -1,9 +1,3 @@
-"""Seed demo users and sample documents.
-
-Runs idempotently on startup so a fresh clone / fresh deploy immediately has
-accounts a reviewer can log in with and a pre-existing shared document to show
-the "Shared with me" flow without any setup.
-"""
 from sqlalchemy.orm import Session
 
 from .config import settings
@@ -52,7 +46,6 @@ def seed(db: Session) -> None:
     alice = created["alice@example.com"]
     bob = created["bob@example.com"]
 
-    # Only seed sample docs once (when Alice owns none).
     if db.query(Document).filter(Document.owner_id == alice.id).count() == 0:
         welcome = Document(title="Welcome to CollabDocs", content=_WELCOME_HTML, owner_id=alice.id)
         shared = Document(title="Shared project notes", content=_SHARED_HTML, owner_id=alice.id)
