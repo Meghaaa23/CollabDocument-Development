@@ -23,3 +23,7 @@ backend/static/
 Thumbs.db
 .idea/
 .vscode/
+
+# Video files are too large for git (GitHub rejects >100MB); keep them in Google Drive
+*.mp4
+*.mov

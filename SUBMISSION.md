@@ -1,65 +1,83 @@
-# SUBMISSION
+CollabDocs – Project Submission
 
-**Project:** CollabDocs — a lightweight collaborative document editor
-**Candidate:** Meghana Konka
-**Stack:** FastAPI · React + Vite · TipTap · SQLAlchemy/SQLite · Docker
+Name: Meghana Konka  
+Tech Stack: FastAPI, React, Vite, TipTap, SQLAlchemy, SQLite, Docker
 
----
+# About the Project
 
-## What is included
+CollabDocs is a lightweight collaborative document editor where users can create, edit, save, and share documents with others.
 
-| Item | Location |
-|---|---|
-| Source code (backend + frontend) | `backend/`, `frontend/` |
-| Local setup & run instructions | [`README.md`](./README.md) |
-| Architecture note | [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
-| AI workflow note | [`AI_WORKFLOW.md`](./AI_WORKFLOW.md) |
-| Automated tests (8 passing) | `backend/tests/test_api.py` |
-| Dockerfile + Render blueprint | `Dockerfile`, `render.yaml` |
-| UI screenshots | `docs/screenshots/` |
-| Walkthrough video link | `VIDEO_LINK.txt` |
-| This index | `SUBMISSION.md` |
+The goal was to build a simple document editor with the essential features you'd expect from a collaborative application, including rich-text editing, automatic saving, file uploads, and document-sharing permissions.
 
-## Live deployment
+# What's Included
 
-- **Live URL:** **https://collabdocs-untf.onrender.com**
-  - _Hosted on Render's free tier; the first request after idle can take ~30–50s to wake (cold start), then it's fast._
-- **Demo accounts** (password `demo1234`):
-  - `alice@example.com` — owns the sample documents
-  - `bob@example.com` — has a document shared with him
-  - `carol@example.com` — empty; share a doc to her to demo the flow
+The submission includes the complete source code for both the backend and frontend.
 
-## How to review the sharing flow quickly
+- `backend/` – FastAPI backend and API implementation.
+- `frontend/` – React application built with Vite.
+- `README.md` – Instructions to install and run the application locally.
+- `ARCHITECTURE.md` – Overview of the application structure and technical decisions.
+- `AI_WORKFLOW.md` – Details about how AI tools were used during development.
+- `backend/tests/test_api.py` – Automated backend tests.
+- `Dockerfile` and `render.yaml` – Deployment configuration.
+- `docs/screenshots/` – Screenshots of the application.
+- `VIDEO_LINK.txt` – Walkthrough video link.
 
-1. Sign in as **alice@example.com**.
-2. Open **“Welcome to CollabDocs”** → click **Share** → add `carol@example.com`.
-3. Sign out → sign in as **carol@example.com** → the doc appears under
-   **“Shared with me”** (not “My documents”), with its role badge.
-4. As Carol (view role) you cannot delete it; as an edit-share you can edit the
-   content but still cannot delete — all enforced server-side.
+# Live Application
 
-## What is working (end to end)
+The application is deployed and available here:
 
-- Create, rename, edit, save (autosave), and reopen documents
-- Rich text: bold, italic, underline, H1–H3, bullet & numbered lists, undo/redo
-- Upload `.txt` / `.md` / `.docx` → new editable document
-- Share with another user (view/edit); owned vs. shared clearly distinguished
-- Persistence across refresh; formatting preserved
-- Input validation, error handling, HTML sanitization (XSS defense)
-- 8 automated tests passing (`pytest -q`)
+**https://collabdocs-untf.onrender.com**
 
-## What is incomplete / intentionally out of scope
+It's hosted on Render's free tier, so the first request after a period of inactivity may take around 30–50 seconds to load. After that, it should respond normally.
 
-- **Real-time multi-user sync / live cursors** — optional stretch; highest
-  effort/risk. Collaboration is via share + autosave + reopen.
-- Sign-up / password reset — seeded accounts used (allowed by the brief).
-- Version history, PDF export, granular roles — optional stretch.
+# Demo Accounts
 
-## What I'd build next (another 2–4 hours)
+All accounts use the password: `demo1234`.
 
-1. Real-time sync (WebSocket broadcasting editor steps, or Yjs).
-2. Export to PDF / Markdown (easy given HTML storage).
-3. Document version history with a diff view.
-4. A Playwright E2E test covering the cross-user sharing path.
+- **alice@example.com** – Account with sample documents.
+- **bob@example.com** – Account with access to a shared document.
+- **carol@example.com** – Empty account for testing document sharing.
 
-_(Full reasoning in [`ARCHITECTURE.md`](./ARCHITECTURE.md).)_
+# How to Test Document Sharing
+
+You can test the sharing functionality using the following steps:
+
+1. Log in as Alice.
+2. Open the document **Welcome to CollabDocs**.
+3. Click Share and enter `carol@example.com`.
+4. Grant Carol access to the document.
+5. Log out and sign in as Carol.
+6. You should now see the document under **Shared with me**.
+
+Document permissions are checked on the backend. A user with view access cannot edit or delete the document. A user with edit access can make changes but cannot delete a document owned by someone else.
+
+# Implemented Features
+
+The application currently supports:
+
+- Creating, editing, renaming, saving, and reopening documents.
+- Automatic saving of changes.
+- Rich-text formatting, including bold, italic, underline, headings, and lists.
+- Undo and redo functionality.
+- Uploading `.txt`, `.md`, and `.docx` files as editable documents.
+- Sharing documents with view or edit permissions.
+- Separate sections for personal and shared documents.
+- Preserving document content and formatting after refreshing the page.
+- Input validation, error handling, and HTML sanitization for XSS protection.
+
+I also added automated backend tests. All 8 tests are currently passing with `pytest -q`.
+
+# What's Not Included Yet
+
+Real-time collaboration, such as live editing by multiple users and live cursors, is not implemented in this version. Currently, users can share documents, make changes, and access the saved content when they reopen the document.
+
+I also haven't implemented user registration, password reset, document version history, or PDF export. The application uses predefined demo accounts, and I focused on completing the core editing and sharing functionality first.
+
+# What I Would Improve Next
+
+Given a little more development time, I would work on real-time synchronization using WebSockets or Yjs, add PDF and Markdown export, and introduce document version history.
+
+I would also add Playwright end-to-end tests to cover the complete workflow between users, especially document sharing and permission handling.
+
+For more details about the implementation and technical decisions, please refer to `ARCHITECTURE.md`.

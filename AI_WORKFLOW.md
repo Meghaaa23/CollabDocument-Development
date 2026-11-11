@@ -1,67 +1,75 @@
-# AI-native workflow note
+# AI Workflow – CollabDocs
 
-> This is an AI-forward role, so here is an honest account of how I used AI on
-> this assignment — where it helped, where I overrode it, and how I kept
-> engineering judgment in my own hands rather than outsourcing it.
+## How I Used AI
 
-## Tools used
+I used Claude Code (Opus) through the Claude desktop app while developing CollabDocs. I mainly used it to speed up coding, generate repetitive code, help with debugging, and write initial drafts of tests and documentation.
 
-- **Claude (Claude Code / Opus, in the Claude desktop app)** — my primary
-  pair-programmer: scaffolding the FastAPI + React app, generating boilerplate
-  (ORM models, Pydantic schemas, CSS), drafting tests and docs, and driving a
-  browser to verify the running app.
-- Standard local tooling (`pytest`, `uvicorn`, `vite`) for ground-truth
-  verification — I never trusted AI output until I ran it.
+I treated Claude as a coding assistant rather than relying on it to make all the decisions. I reviewed the generated code, made changes where needed, and tested the application locally to make sure everything worked.
 
-## Where AI materially sped me up
+## Where AI Helped
 
-- **Scaffolding the full stack.** The repetitive, well-understood layers —
-  SQLAlchemy models, request/response schemas, the fetch client, the CSS design
-  system, the Dockerfile — are where AI is strongest. Generating these in
-  minutes freed my time for the decisions that actually matter.
-- **The TipTap toolbar + autosave wiring** — correct but fiddly glue code
-  (keeping editor focus on toolbar clicks, debouncing saves, not firing a save
-  during the initial `setContent`).
-- **Test and doc drafts** — AI produced first drafts of the pytest cases and
-  this documentation, which I then shaped to match the real priorities.
+Claude helped me set up the initial FastAPI backend and React frontend. It generated parts of the SQLAlchemy models, Pydantic schemas, API routes, frontend components, CSS, and Docker configuration.
 
-## What I changed or rejected
+It was also useful when implementing the TipTap editor, especially the toolbar and autosave functionality. There were a few details to handle, such as keeping the editor focused when clicking formatting buttons and making sure autosave didn't trigger unnecessarily when loading an existing document.
 
-- **I directed the architecture, not the AI.** The decisions that shape the
-  product were mine: *what* to build deeply vs. cut (real-time sync → out of
-  scope), HTML-vs-JSON storage, SQLite-with-a-Postgres-escape-hatch, returning
-  404 instead of 403 to avoid leaking document existence, and centralizing all
-  access control in one `access.py` module. AI implemented these; it didn't
-  choose them.
-- **I added the security layer AI didn't volunteer.** Stored content comes from
-  an untrusted client *and* from uploaded `.docx` files, so I insisted on an
-  allow-list HTML sanitizer (`sanitize.py`) to close the stored-XSS hole. There
-  is a test proving a `<script>` tag is stripped on save.
-- **I kept the test suite focused.** Rather than a pile of trivial assertions, I
-  concentrated coverage on the highest-risk logic: sharing permissions (a viewer
-  must not edit/delete; an unshared user gets 404) and untrusted-content
-  handling.
+I also used Claude to draft the initial pytest cases and documentation. I reviewed these and made changes based on what I had actually implemented.
 
-## How I verified correctness, UX, and reliability
+Overall, AI helped me spend less time writing repetitive code and more time working on the application's functionality.
 
-- **Tests caught a real bug.** The first `pytest` run failed: the Pydantic
-  `EmailStr` validator rejects `.test` domains (a reserved TLD), so logins
-  returned 422. I would not have caught this by eye. I switched the seeded
-  accounts to `@example.com` and the suite went green (8/8). This is the whole
-  point of not trusting generated code blindly.
-- **Manual end-to-end check in a browser.** I ran the production single-service
-  build (FastAPI serving the built SPA) and clicked through the real flows:
-  login → dashboard (owned vs. shared split) → open doc → verify rich-text
-  rendering and autosave → **Share** with another user → confirmed the grant
-  appears with the right role. Screenshots are in `docs/screenshots/`.
-- **Reliability**: input validation on every endpoint, size/type limits on
-  uploads, typed HTTP errors surfaced in the UI, and a `/api/health` check for
-  the deploy platform.
+## Decisions I Made During Development
 
-## Principle I worked by
+I made the main decisions about the application's architecture and which features to prioritize.
 
-AI is excellent at *execution* and weak at *judgment under ambiguity*. I used it
-to move fast on the former and reserved the latter — scope, security, data
-model, what to cut — for myself. The assignment asked for "practical AI usage,
-not volume," and the tell is this: the one bug that mattered was caught by a
-test I ran, not by the model that wrote the code.
+For example, I decided to focus on document editing, saving, uploading, and sharing instead of implementing real-time collaboration. Live editing would have required additional time and testing, so I kept it outside the scope of this version.
+
+I chose to store document content as HTML to preserve rich-text formatting. I used SQLite for simplicity while keeping the database layer structured so it could be moved to PostgreSQL later if needed.
+
+I also kept the document permission checks in a separate `access.py` module so the same rules could be applied across different API endpoints.
+
+For documents that a user cannot access, the API returns a 404 response instead of exposing whether the document exists.
+
+## Security and Code Review
+
+One area I paid particular attention to was handling document content safely.
+
+Since users can enter rich text and upload `.docx` files, I wanted to make sure potentially unsafe HTML could not be stored and rendered directly.
+
+I added HTML sanitization in `sanitize.py` to remove unsafe elements while preserving supported formatting.
+
+I also included a test to verify that a `<script>` tag is removed when saving document content.
+
+For document sharing, I made sure permissions were enforced on the backend rather than relying only on disabled buttons in the frontend.
+
+For example, users with view access cannot edit or delete documents, and users with edit access cannot delete documents owned by someone else.
+
+## Testing and Verification
+
+I used `pytest`, `uvicorn`, and Vite to run and test the application locally.
+
+During the first test run, I encountered an issue with the demo account email addresses. The Pydantic `EmailStr` validation rejected the `.test` domains I had initially used, which caused login requests to return a 422 error.
+
+After identifying the issue, I changed the demo accounts to use `@example.com` addresses and ran the tests again.
+
+All **8 backend tests passed** after the fix.
+
+I also tested the application manually in a browser using the production build, where FastAPI serves the React frontend.
+
+I checked the main user flows, including logging in, creating and opening documents, applying rich-text formatting, saving changes, and sharing documents with another user.
+
+I also verified that owned documents and shared documents appeared in their respective sections.
+
+Screenshots from the application are available in `docs/screenshots/`.
+
+Apart from functionality, I added input validation, file size and type restrictions for uploads, error handling, and a `/api/health` endpoint for deployment checks.
+
+## What I Learned
+
+Using AI helped me complete the initial implementation much faster, especially when working across the backend and frontend.
+
+However, I still needed to review the generated code, fix issues, and verify that the application behaved as expected.
+
+The email validation issue was a good example. The generated code looked fine initially, but running the tests revealed a problem that needed to be fixed.
+
+I found AI most useful for generating code and helping with implementation details, while decisions about architecture, security, testing, and feature priorities still required my own judgment.
+
+For this project, I focused on using AI where it saved development time without skipping code review or testing.
